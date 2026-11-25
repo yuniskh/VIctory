@@ -2190,6 +2190,19 @@ mod tests {
     #[cfg(windows)]
     #[test]
     fn buffer_data_reaches_the_host_texture() {
+        check_buffer_texture_copy(None);
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn boxed_buffer_copy_at_origin_preserves_untouched_texels() {
+        // The source footprint and destination are both 4x4. Only the source box
+        // tells the copy that it must preserve the other twelve destination texels.
+        check_buffer_texture_copy(Some([1, 1, 0, 3, 3, 1]));
+    }
+
+    #[cfg(windows)]
+    fn check_buffer_texture_copy(source_box: Option<[u32; 6]>) {
         use windows::Win32::Graphics::Direct3D12::*;
         let Some(host) = crate::host::host() else {
             return; // no host GPU here
@@ -2230,6 +2243,18 @@ mod tests {
         let bytes = unsafe { std::slice::from_raw_parts_mut(data, 1024) };
         for (i, b) in bytes.iter_mut().enumerate() {
             *b = (i % 251) as u8;
+        }
+
+        const BACKGROUND: u8 = 0xdb;
+        let size = usize::try_from(texture_layout(&rgba).unwrap().size).unwrap();
+        // SAFETY: this committed texture owns the entire 4x4 layout.
+        unsafe { resource(image).data().write_bytes(BACKGROUND, size) };
+        let [left, top, _, right, bottom, _] = source_box.unwrap_or([0, 0, 0, 4, 4, 1]);
+        let mut expected = [[BACKGROUND; 16]; 4];
+        let width_bytes = (right - left) as usize * 4;
+        for (row, y) in expected.iter_mut().zip(top..bottom) {
+            let at = y as usize * 256 + left as usize * 4;
+            row[..width_bytes].copy_from_slice(&bytes[at..at + width_bytes]);
         }
 
         let queue_iid = guid(
@@ -2291,7 +2316,8 @@ mod tests {
         };
         type Copy =
             extern "system" fn(This, *const Location, u32, u32, u32, *const Location, *const u8);
-        slot::<Copy>(list, 0x80)(list, &to, 0, 0, 0, &from, null.cast());
+        let region = source_box.as_ref().map_or(std::ptr::null(), |b| b.as_ptr().cast());
+        slot::<Copy>(list, 0x80)(list, &to, 0, 0, 0, &from, region);
         slot::<extern "system" fn(This) -> HRESULT>(list, 0x48)(list);
         slot::<extern "system" fn(This, u32, *const This)>(queue, 0x50)(queue, 1, &list);
 
@@ -2377,10 +2403,16 @@ mod tests {
                 .unwrap();
             std::slice::from_raw_parts(mapped.cast::<u8>(), 1024)
         };
-        for row in 0..4 {
+        let actual: [[u8; 16]; 4] = std::array::from_fn(|row| {
             let at = row * 256;
-            assert_eq!(read[at..at + 16], bytes[at..at + 16], "row {row}");
+            read[at..at + 16].try_into().unwrap()
+        });
+        // SAFETY: the CPU has finished reading and wrote no bytes to the mapping.
+        unsafe { readback.Unmap(0, Some(&D3D12_RANGE::default())) };
+        for object in [list, allocator, queue, source, image] {
+            slot::<Release>(object, 0x10)(object);
         }
+        assert_eq!(actual, expected, "source box {source_box:?}");
     }
 
     #[test]
