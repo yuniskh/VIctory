@@ -1,0 +1,86 @@
+--- a/crates/victory-gpu/src/resource.rs
++++ b/crates/victory-gpu/src/resource.rs
+@@ -1868,6 +1868,83 @@
+ mod tests {
+     use super::*;
+     use crate::object::slot;
++
++    // Native D3D12 comparison by YUNISKH (@yuniskh). Include in resource::tests.
++    #[cfg(windows)]
++    #[test]
++    #[ignore = "compares both video planes with local hardware adapters"]
++    fn compare_video_layouts_to_native() {
++        use windows::Win32::Graphics::Direct3D::D3D_FEATURE_LEVEL_12_0;
++        use windows::Win32::Graphics::Direct3D12::*;
++        use windows::Win32::Graphics::Dxgi::Common::{DXGI_FORMAT, DXGI_SAMPLE_DESC};
++        use windows::Win32::Graphics::Dxgi::*;
++
++        // SAFETY: ordinary DXGI factory creation. Each adapter and device stays live during its queries.
++        let factory: IDXGIFactory4 = unsafe { CreateDXGIFactory2(DXGI_CREATE_FACTORY_FLAGS(0)) }.unwrap();
++        let mut tested = 0;
++        for index in 0.. {
++            // SAFETY: DXGI reports the end of the adapter list as an error.
++            let Ok(adapter) = (unsafe { factory.EnumAdapters1(index) }) else { break };
++            let info = unsafe { adapter.GetDesc1() }.unwrap();
++            if info.Flags & DXGI_ADAPTER_FLAG_SOFTWARE.0 as u32 != 0 {
++                continue;
++            }
++            let mut device: Option<ID3D12Device> = None;
++            if unsafe { D3D12CreateDevice(&adapter, D3D_FEATURE_LEVEL_12_0, &mut device) }.is_err() {
++                continue;
++            }
++            let device = device.unwrap();
++            let end = info.Description.iter().position(|&v| v == 0).unwrap_or(info.Description.len());
++            let label = String::from_utf16_lossy(&info.Description[..end]);
++            let mut queries = 0;
++            let mut entries = 0;
++            for format in [103, 104] {
++                for (w, h) in [(2, 2), (4, 4), (128, 64), (514, 258), (1920, 1080), (3840, 2160)] {
++                    for layers in [1u16, 2, 3] {
++                        let guest = ResourceDesc { depth_or_array_size: layers, ..texture(w, h, format, 1) };
++                        let native = D3D12_RESOURCE_DESC {
++                            Dimension: D3D12_RESOURCE_DIMENSION_TEXTURE2D, Width: w, Height: h,
++                            DepthOrArraySize: layers, MipLevels: 1, Format: DXGI_FORMAT(format as i32),
++                            SampleDesc: DXGI_SAMPLE_DESC { Count: 1, Quality: 0 }, ..Default::default()
++                        };
++                        let n = 2 * u32::from(layers);
++                        for first in 0..n {
++                            for count in 1..=n-first {
++                                for base in [0, 512, 4096] {
++                                    let (mut rows, mut bytes, mut total) = ([0; 6], [0; 6], 0);
++                                    let mut layouts = [NO_FOOTPRINT; 6];
++                                    copyable_footprints(std::ptr::null(), &guest, first, count, base,
++                                        layouts.as_mut_ptr(), rows.as_mut_ptr(), bytes.as_mut_ptr(), &mut total);
++                                    let mut native_fp = [D3D12_PLACED_SUBRESOURCE_FOOTPRINT::default(); 6];
++                                    let (mut native_rows, mut native_bytes, mut native_total) = ([0; 6], [0; 6], 0);
++                                    // SAFETY: each output holds all 'count' entries, at most six.
++                                    unsafe { device.GetCopyableFootprints(&native, first, count, base,
++                                        Some(native_fp.as_mut_ptr()), Some(native_rows.as_mut_ptr()),
++                                        Some(native_bytes.as_mut_ptr()), Some(&mut native_total)) };
++                                    assert_ne!(native_total, u64::MAX, "native API rejected valid input");
++                                    assert_eq!(total, native_total, "{label} format={format} first={first} count={count}");
++                                    for i in 0..count as usize {
++                                        let g = layouts[i];
++                                        let f = native_fp[i].Footprint;
++                                        assert_eq!(
++                                            (g.offset, g.format, g.width, g.height, g.depth, g.row_pitch, rows[i], bytes[i]),
++                                            (native_fp[i].Offset, f.Format.0 as u32, f.Width, f.Height, f.Depth, f.RowPitch, native_rows[i], native_bytes[i]),
++                                            "{label} format={format} {w}x{h} layers={layers} first={first} count={count} base={base} index={i}"
++                                        );
++                                    }
++                                    queries += 1;
++                                    entries += count;
++                                }
++                            }
++                        }
++                    }
++                }
++            }
++            println!("native comparison: {label} pci={:04x}:{:04x} queries={queries} plane_entries={entries} all matched", info.VendorId, info.DeviceId);
++            tested += 1;
++        }
++        assert!(tested > 0, "a D3D12 hardware adapter is required");
++    }
+ 
+     #[test]
+     fn a8_unorm_is_not_in_the_r8_typeless_family() {

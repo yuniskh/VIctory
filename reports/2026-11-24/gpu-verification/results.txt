@@ -1,0 +1,168 @@
+order-base / rtx5090
+test resource::tests::copy_recording_order_1891 ... D3D12 adapter=NVIDIA GeForce RTX 5090 software=false
+pixels=7/16 input=buffer record=A/B submit=A/B explicit_preupload=false
+pixels=7/16 input=buffer record=B/A submit=A/B explicit_preupload=false
+pixels=7/16 input=texture record=A/B submit=A/B explicit_preupload=false
+pixels=7/16 input=texture record=B/A submit=A/B explicit_preupload=false
+pixels=16/16 input=buffer record=A/B submit=A/B explicit_preupload=true
+pixels=16/16 input=buffer record=B/A submit=A/B explicit_preupload=true
+pixels=16/16 input=texture record=A/B submit=A/B explicit_preupload=true
+pixels=16/16 input=texture record=B/A submit=A/B explicit_preupload=true
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 146 filtered out; finished in 0.28s
+
+order-base / warp
+test resource::tests::copy_recording_order_1891 ... D3D12 adapter=Microsoft Basic Render Driver software=true
+pixels=7/16 input=buffer record=A/B submit=A/B explicit_preupload=false
+pixels=7/16 input=buffer record=B/A submit=A/B explicit_preupload=false
+pixels=7/16 input=texture record=A/B submit=A/B explicit_preupload=false
+pixels=7/16 input=texture record=B/A submit=A/B explicit_preupload=false
+pixels=16/16 input=buffer record=A/B submit=A/B explicit_preupload=true
+pixels=16/16 input=buffer record=B/A submit=A/B explicit_preupload=true
+pixels=16/16 input=texture record=A/B submit=A/B explicit_preupload=true
+pixels=16/16 input=texture record=B/A submit=A/B explicit_preupload=true
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 146 filtered out; finished in 0.03s
+
+order-pr / rtx5090
+test resource::tests::copy_recording_order_1891 ... D3D12 adapter=NVIDIA GeForce RTX 5090 software=false
+pixels=16/16 input=buffer record=A/B submit=A/B explicit_preupload=false
+pixels=16/16 input=buffer record=B/A submit=A/B explicit_preupload=false
+pixels=16/16 input=texture record=A/B submit=A/B explicit_preupload=false
+pixels=16/16 input=texture record=B/A submit=A/B explicit_preupload=false
+pixels=16/16 input=buffer record=A/B submit=A/B explicit_preupload=true
+pixels=16/16 input=buffer record=B/A submit=A/B explicit_preupload=true
+pixels=16/16 input=texture record=A/B submit=A/B explicit_preupload=true
+pixels=16/16 input=texture record=B/A submit=A/B explicit_preupload=true
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 147 filtered out; finished in 0.24s
+
+order-pr / warp
+test resource::tests::copy_recording_order_1891 ... D3D12 adapter=Microsoft Basic Render Driver software=true
+pixels=16/16 input=buffer record=A/B submit=A/B explicit_preupload=false
+pixels=16/16 input=buffer record=B/A submit=A/B explicit_preupload=false
+pixels=16/16 input=texture record=A/B submit=A/B explicit_preupload=false
+pixels=16/16 input=texture record=B/A submit=A/B explicit_preupload=false
+pixels=16/16 input=buffer record=A/B submit=A/B explicit_preupload=true
+pixels=16/16 input=buffer record=B/A submit=A/B explicit_preupload=true
+pixels=16/16 input=texture record=A/B submit=A/B explicit_preupload=true
+pixels=16/16 input=texture record=B/A submit=A/B explicit_preupload=true
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 147 filtered out; finished in 0.03s
+
+latest-box-rtx5090-boxed_buffer_copy_at_origin_preserves_untouched_texels
+test resource::tests::boxed_buffer_copy_at_origin_preserves_untouched_texels ... FAILED
+  left: [[9, 10, 11, 12, 13, 14, 15, 16, 0, 0, 0, 0, 0, 0, 0, 0], [14, 15, 16, 17, 18, 19, 20, 21, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+ right: [[9, 10, 11, 12, 13, 14, 15, 16, 219, 219, 219, 219, 219, 219, 219, 219], [14, 15, 16, 17, 18, 19, 20, 21, 219, 219, 219, 219, 219, 219, 219, 219], [219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219], [219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219]]
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 148 filtered out; finished in 0.29s
+
+latest-box-rtx5090-buffer_data_reaches_the_host_texture
+test resource::tests::buffer_data_reaches_the_host_texture ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 148 filtered out; finished in 0.25s
+
+latest-box-warp-boxed_buffer_copy_at_origin_preserves_untouched_texels
+test resource::tests::boxed_buffer_copy_at_origin_preserves_untouched_texels ... FAILED
+  left: [[9, 10, 11, 12, 13, 14, 15, 16, 0, 0, 0, 0, 0, 0, 0, 0], [14, 15, 16, 17, 18, 19, 20, 21, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+ right: [[9, 10, 11, 12, 13, 14, 15, 16, 219, 219, 219, 219, 219, 219, 219, 219], [14, 15, 16, 17, 18, 19, 20, 21, 219, 219, 219, 219, 219, 219, 219, 219], [219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219], [219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219]]
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 148 filtered out; finished in 0.03s
+
+latest-box-warp-buffer_data_reaches_the_host_texture
+test resource::tests::buffer_data_reaches_the_host_texture ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 148 filtered out; finished in 0.03s
+
+box-fixed-rtx5090-boxed_buffer_copy_at_origin_preserves_untouched_texels
+test resource::tests::boxed_buffer_copy_at_origin_preserves_untouched_texels ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 147 filtered out; finished in 0.29s
+
+box-fixed-rtx5090-buffer_data_reaches_the_host_texture
+test resource::tests::buffer_data_reaches_the_host_texture ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 147 filtered out; finished in 0.25s
+
+box-fixed-rtx5090-texture_uploads_follow_submission_order_not_recording_order
+test resource::tests::texture_uploads_follow_submission_order_not_recording_order ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 147 filtered out; finished in 0.28s
+
+box-fixed-suite
+test resource::tests::boxed_buffer_copy_at_origin_preserves_untouched_texels ... ok
+test resource::tests::buffer_data_reaches_the_host_texture ... ok
+test resource::tests::texture_uploads_follow_submission_order_not_recording_order ... ok
+test result: ok. 146 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 1.05s
+
+box-fixed-warp-boxed_buffer_copy_at_origin_preserves_untouched_texels
+test resource::tests::boxed_buffer_copy_at_origin_preserves_untouched_texels ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 147 filtered out; finished in 0.03s
+
+box-fixed-warp-buffer_data_reaches_the_host_texture
+test resource::tests::buffer_data_reaches_the_host_texture ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 147 filtered out; finished in 0.03s
+
+box-fixed-warp-texture_uploads_follow_submission_order_not_recording_order
+test resource::tests::texture_uploads_follow_submission_order_not_recording_order ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 147 filtered out; finished in 0.04s
+
+box-control-rtx5090-boxed_buffer_copy_at_origin_preserves_untouched_texels
+test resource::tests::boxed_buffer_copy_at_origin_preserves_untouched_texels ... FAILED
+  left: [[9, 10, 11, 12, 13, 14, 15, 16, 0, 0, 0, 0, 0, 0, 0, 0], [14, 15, 16, 17, 18, 19, 20, 21, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+ right: [[9, 10, 11, 12, 13, 14, 15, 16, 219, 219, 219, 219, 219, 219, 219, 219], [14, 15, 16, 17, 18, 19, 20, 21, 219, 219, 219, 219, 219, 219, 219, 219], [219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219], [219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219]]
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 147 filtered out; finished in 0.30s
+
+box-control-rtx5090-buffer_data_reaches_the_host_texture
+test resource::tests::buffer_data_reaches_the_host_texture ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 147 filtered out; finished in 0.26s
+
+box-control-rtx5090-texture_uploads_follow_submission_order_not_recording_order
+test resource::tests::texture_uploads_follow_submission_order_not_recording_order ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 147 filtered out; finished in 0.27s
+
+box-control-warp-boxed_buffer_copy_at_origin_preserves_untouched_texels
+test resource::tests::boxed_buffer_copy_at_origin_preserves_untouched_texels ... FAILED
+  left: [[9, 10, 11, 12, 13, 14, 15, 16, 0, 0, 0, 0, 0, 0, 0, 0], [14, 15, 16, 17, 18, 19, 20, 21, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+ right: [[9, 10, 11, 12, 13, 14, 15, 16, 219, 219, 219, 219, 219, 219, 219, 219], [14, 15, 16, 17, 18, 19, 20, 21, 219, 219, 219, 219, 219, 219, 219, 219], [219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219], [219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219]]
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 147 filtered out; finished in 0.03s
+
+box-control-warp-buffer_data_reaches_the_host_texture
+test resource::tests::buffer_data_reaches_the_host_texture ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 147 filtered out; finished in 0.03s
+
+box-control-warp-texture_uploads_follow_submission_order_not_recording_order
+test resource::tests::texture_uploads_follow_submission_order_not_recording_order ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 147 filtered out; finished in 0.03s
+
+planar-oracle-hardware
+test resource::tests::compare_video_layouts_to_native ... native comparison: NVIDIA GeForce RTX 5090 pci=10de:2b85 queries=1224 plane_entries=2880 all matched
+native comparison: AMD Radeon(TM) Graphics pci=1002:13c0 queries=1224 plane_entries=2880 all matched
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 144 filtered out; finished in 0.33s
+
+planar-base-focused
+left: [(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
+right: [(60, 514, 258), (60, 514, 258), (48, 257, 129), (48, 257, 129)]
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 143 filtered out; finished in 0.00s
+
+planar-focused
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 143 filtered out; finished in 0.00s
+
+planar-base-hardware-suite
+left: [(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
+right: [(60, 514, 258), (60, 514, 258), (48, 257, 129), (48, 257, 129)]
+test result: FAILED. 139 passed; 3 failed; 2 ignored; 0 measured; 0 filtered out; finished in 2.30s
+
+planar-hardware-suite
+test result: FAILED. 140 passed; 2 failed; 2 ignored; 0 measured; 0 filtered out; finished in 2.39s
+
+planar-warp-suite
+test result: ok. 145 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.91s
+
+planar-clippy
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.93s
+
+planar-clippy-diagnostics
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.79s
+
+planar-asset-policy
+asset policy: 182 files ok
+
+latest-planar-focused
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 145 filtered out; finished in 0.00s
+
+latest-planar-hardware-suite
+test result: FAILED. 142 passed; 2 failed; 2 ignored; 0 measured; 0 filtered out; finished in 2.36s
+
+latest-planar-warp-suite
+test result: ok. 147 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.95s
+
